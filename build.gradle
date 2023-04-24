@@ -1,0 +1,53 @@
+plugins {
+    id "com.google.protobuf" version "0.8.10"
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    // https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java
+    implementation group: 'com.google.protobuf', name: 'protobuf-java', version: '3.21.12'
+    // https://mvnrepository.com/artifact/io.grpc/grpc-all
+    implementation group: 'io.grpc', name: 'grpc-all', version: '1.51.0'
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+
+}
+
+sourceSets{
+    main{
+        java{
+            srcDirs 'build/generated/source/edu.duke.ece.amz.proto/main/grpc'
+            srcDirs 'build/generated/source/edu.duke.ece.amz.proto/main/java'
+        }
+    }
+}
+
+protobuf {
+    // Configure the protoc executable
+    protoc {
+        // Download from repositories
+        artifact = 'com.google.protobuf:protoc:3.22.3'
+    }
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.53.0'
+
+        }
+    }
+
+    generateProtoTasks{
+        all()*.plugins{
+            grpc {}
+        }
+    }
+}
