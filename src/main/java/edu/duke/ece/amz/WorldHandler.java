@@ -1,4 +1,5 @@
 package edu.duke.ece.amz;
+import edu.duke.ece.amz.proto.AmzUps.*;
 import edu.duke.ece.amz.proto.WorldAmazon.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -7,13 +8,10 @@ import java.util.Timer;
 import java.util.concurrent.atomic.AtomicLong;
 
 // client side only use one socket, require socket in, socket out, package ID to build a thread
-public class WorldHandler implements Runnable {
+public class WorldHandler extends Handler implements Runnable {
     private final AResponses msg;
-    private final Map<Long, Timer> schedulerMap;
-    private final Map<Long, Package> packageMap;
-    private final AtomicLong seqNum;
-    private final WorldSender worldSender;
-    private final Database mydb;
+    private final boolean mockUPS;
+    private final MockUPS ups;
 
 
     public WorldHandler(
@@ -21,14 +19,15 @@ public class WorldHandler implements Runnable {
             Map<Long, Package> packageMap,
             AtomicLong seqNum,
             WorldSender worldSender,
-            Database mydb
+            Database mydb,
+            UpsSender upsSender,
+            boolean mockUPS,
+            MockUPS ups
     ){
-        this.schedulerMap = schedulerMap;
-        this.packageMap = packageMap;
+        super(schedulerMap, packageMap, seqNum, mydb, upsSender, worldSender);
         this.msg = msg;
-        this.seqNum = seqNum;
-        this.worldSender = worldSender;
-        this.mydb = mydb;
+        this.mockUPS = mockUPS;
+        this.ups = ups;
     }
 
     @Override
@@ -36,49 +35,91 @@ public class WorldHandler implements Runnable {
 
         ArrayList<Long> seqNumList = new ArrayList<>();
 
+        // Order purchased tell World to pack and tell Ups to pick
         for (APurchaseMore purchaseMore : msg.getArrivedList()){
             seqNumList.add(purchaseMore.getSeqnum());
             for(Package p : packageMap.values()){
                 if(p.getWhID() != purchaseMore.getWhnum()){
                     continue;
                 }
-                if (p.getProducts() != purchaseMore.getThingsList()){
+                if (! p.getProducts().equals(purchaseMore.getThingsList())){
                     continue;
                 }
                 // If this response is already processed, skip
-                if (p.getStatus().equals(Package.PACKING)){
+                if (!p.getStatus().equals(Package.PROCESSING)){
                     break;
                 }
 
-                System.out.println("Package arrived: " + p.getId());
-                // Tell Warehouse to Pack
+                System.out.println("Package arrived warehouse: " + p.getId());
+
                 try {
+                    // Tell Warehouse to Pack
                     pack(p.getId());
+                    // Tell UPS to Pick
+                    upsPickUp(p.getId());
                 } catch (IOException e) {
-                    System.err.println(e.toString());
+                    System.err.println(e.getMessage());
                 }
 
-                // Tell UPS to Pick
                 break;
             }
         }
-        // packed package ---> to load
+
+        // Package packed, Tell world to load
         for (APacked p : msg.getReadyList()){
             System.out.println(p.getShipid() + ": Packed");
+            seqNumList.add(p.getSeqnum());
+            if (!packageMap.containsKey(p.getShipid())){
+                continue;
+            }
+            Package pkg = packageMap.get(p.getShipid());
 
+            // Check if it is duplicated
+            if (!pkg.getStatus().equals(Package.PACKING)){
+                continue;
+            }
+
+            // Update package status
+            pkg.setStatus(Package.PACKED);
+            mydb.updateStatus(p.getShipid(), Package.PACKED);
+            // Check if Truck arrived
+            if (pkg.getTruckID() != -1){
+                try {
+                    load(p.getShipid());
+                } catch (IOException e) {
+                    System.err.println("Load Error: " + e.getMessage());
+                }
+            }
         }
-        // loaded package ---> to delivery
+
+        // TODO: Package Loaded, tell Ups to deliver
         for (ALoaded l : msg.getLoadedList()){
+
+            seqNumList.add(l.getSeqnum());
+            if (!packageMap.containsKey(l.getShipid())){
+                continue;
+            }
+            Package pkg = packageMap.get(l.getShipid());
+            if (!pkg.getStatus().equals(Package.LOADING)){
+                continue;
+            }
             System.out.println(l.getShipid() + ": Loaded");
+            try {
+                upsDeliver(l.getShipid());
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+            }
         }
+
         // error message
         for (AErr err : msg.getErrorList()){
             System.err.println(err.getErr());
         }
 
+        // Tell world acked
+        System.out.println("World acked: " + msg.getAcksList());
         for (long ack : msg.getAcksList()){
             // Remove acked requests from tracker
-            System.out.println("World acked: " + msg.getAcksList());
             if (schedulerMap.containsKey(ack)){
                 schedulerMap.get(ack).cancel();
                 schedulerMap.remove(ack);
@@ -87,9 +128,10 @@ public class WorldHandler implements Runnable {
 
         if(seqNumList.size() > 0){
             try {
-                sendACK(seqNumList);
+                ACommands.Builder cmd = ACommands.newBuilder().addAllAcks(seqNumList);
+                worldSender.sendACK(cmd);
             } catch (IOException e) {
-                System.err.println(e.toString());
+                System.err.println(e.getMessage());
             }
         }
 
@@ -105,9 +147,8 @@ public class WorldHandler implements Runnable {
                 addAllThings(pkg.getProducts()).
                 setShipid(pkId).build();
         ACommands.Builder cmd = ACommands.newBuilder().addTopack(packCmd);
-        worldSender.sendToWorld(cmd, curSeqNum);
+        worldSender.sendCmd(cmd, curSeqNum);
         System.out.println("Tell warehouse to pack: " + pkId);
-        //TODO: tell ups to pick up
 
         // update package status in list
         packageMap.get(pkId).setStatus(Package.PACKING);
@@ -116,8 +157,57 @@ public class WorldHandler implements Runnable {
 
     }
 
-    public void sendACK(ArrayList<Long> seqNumList) throws IOException {
-        ACommands.Builder cmd = ACommands.newBuilder().addAllAcks(seqNumList);
-        worldSender.sendToWorld(cmd, seqNum.getAndIncrement());
+    public void upsPickUp(long pkId) throws IOException {
+
+        Package pkg = packageMap.get(pkId);
+
+        long curSeqNum = seqNum.getAndIncrement();
+
+        if (mockUPS){
+            this.ups.pick(pkg.getWhID(), pkId);
+        }
+        String upsName = mydb.getUpsName(pkId);
+
+        AUPickupRequest pickCmd = AUPickupRequest.newBuilder().
+                setSeqNum(curSeqNum).
+                setShipId(pkId).
+                setWarehouseId(pkg.getWhID()).
+                setX(pkg.getWhX()).
+                setY(pkg.getWhY()).
+                setDestinationX(pkg.getDesX()).
+                setDestinationY(pkg.getDesY()).
+                setUpsName(upsName).
+                build();
+
+        AUCommand.Builder cmd = AUCommand.newBuilder().addPickupRequests(pickCmd);
+        upsSender.sendCmd(cmd, curSeqNum);
+        System.out.println("Tell Ups to pick: " + pkId);
+    }
+
+    public void upsDeliver(long pkId) throws IOException {
+
+        Package pkg = packageMap.get(pkId);
+
+        long curSeqNum = seqNum.getAndIncrement();
+
+        // If mock ups
+        if (mockUPS){
+            try {
+                ups.delivery(pkg.getDesX(), pkg.getDesY(), pkg.getId());
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+            }
+        }
+
+        AUDeliverRequest deliverCmd = AUDeliverRequest.newBuilder().
+                setSeqNum(curSeqNum).
+                setShipId(pkId).
+                build();
+
+        AUCommand.Builder cmd = AUCommand.newBuilder().addDeliverRequests(deliverCmd);
+        upsSender.sendCmd(cmd, curSeqNum);
+        System.out.println("Tell Ups to deliver: " + pkId);
+        pkg.setStatus(Package.DELIVERING);
+        mydb.updateStatus(pkg.getId(), Package.DELIVERING);
     }
 }

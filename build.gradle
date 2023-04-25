@@ -20,6 +20,8 @@ dependencies {
     implementation group: 'io.grpc', name: 'grpc-all', version: '1.51.0'
     compileOnly 'org.projectlombok:lombok:1.18.20'
     annotationProcessor 'org.projectlombok:lombok:1.18.20'
+    // https://mvnrepository.com/artifact/org.postgresql/postgresql
+    compile group: 'org.postgresql', name: 'postgresql', version: '42.2.12'
 
 }
 

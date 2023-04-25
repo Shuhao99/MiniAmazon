@@ -1,7 +1,5 @@
 package edu.duke.ece.amz;
 import edu.duke.ece.amz.proto.WorldAmazon.*;
-import jdk.internal.net.http.common.Pair;
-
 import java.sql.*;
 import java.util.*;
 
@@ -9,14 +7,14 @@ import java.util.*;
 public class Database {
     // table name
     private static final String TABLE_ITEM = "item";
-    private static final String TABLE_ORDER = "order";
-    private static final String TABLE_ORDER_ITEMS = "order_items";
+    private static final String TABLE_ORDER = "\"order\"";
+    private static final String TABLE_ORDER_ITEMS = "ordered_items";
     private static final String TABLE_WAREHOUSE = "warehouse";
 
     // database configuration
     private static final String dbUrl = "jdbc:postgresql://localhost:5432/amazon_db";
-    private static final String dbUser = "postgres";
-    private static final String dbPassword = "postgres";
+    private static final String dbUser = "cy141";
+    private static final String dbPassword = "passw@rd!";
 
     // warehouse list
     private final Map<Integer, Pair<Integer, Integer>> warehouseMap;
@@ -48,7 +46,7 @@ public class Database {
             conn.close();
 
         } catch (ClassNotFoundException | SQLException e) {
-            System.err.println(e.toString());
+            System.err.println(e.getMessage());
             tempMap = null;
         }
 
@@ -62,8 +60,8 @@ public class Database {
             whList.add(
                     AInitWarehouse.newBuilder().
                             setId(key).
-                            setX(warehouseMap.get(key).first).
-                            setY(warehouseMap.get(key).second).
+                            setX(warehouseMap.get(key).getFirst()).
+                            setY(warehouseMap.get(key).getSecond()).
                             build()
             );
         }
@@ -84,7 +82,7 @@ public class Database {
             Statement statement = conn.createStatement();
 
             ResultSet result = statement.executeQuery(
-                    String.format("SELECT * FROM %s" +
+                    String.format("SELECT * FROM %s " +
                             "WHERE order_id = %d;",
                             TABLE_ORDER, packageId)
             );
@@ -92,7 +90,7 @@ public class Database {
             int whID = -1;
             Pair<Integer, Integer> dest = new Pair<>(-1, -1);
             if(result.next()){
-                whID = result.getInt("warehouse");
+                whID = result.getInt("warehouse_id");
                 dest = new Pair<>(
                         result.getInt("dest_x"),
                         result.getInt("dest_y")
@@ -103,7 +101,7 @@ public class Database {
             return new Pair<>(whID, dest);
 
         } catch (ClassNotFoundException | SQLException e) {
-            System.err.println(e.toString());
+            System.err.println(e.getMessage() + "This 1");
             return null;
         }
     }
@@ -123,9 +121,9 @@ public class Database {
             Statement statement = conn.createStatement();
 
             ResultSet result = statement.executeQuery(String.format(
-                    "SELECT item.id, item.description, order.count " +
-                            "FROM %s AS order, %s AS item" +
-                            "WHERE order_id = %d AND order.item = item.id;",
+                    "SELECT item.id, item.description, order_t.count " +
+                            "FROM %s AS order_t, %s AS item " +
+                            "WHERE order_id = %d AND order_t.item_id = item.id;",
                     TABLE_ORDER_ITEMS, TABLE_ITEM, packageId)
             );
 
@@ -146,7 +144,7 @@ public class Database {
             res = products;
 
         } catch (ClassNotFoundException | SQLException e) {
-            System.err.println(e.toString());
+            System.err.println(e.getMessage() + "This 2");
             res = null;
         }
         return res;
@@ -160,16 +158,16 @@ public class Database {
      */
     public Package getPackage(long packageId){
         Pair<Integer, Pair<Integer, Integer>> orderInfo = getOrderInfo(packageId);
-        int whId = orderInfo.first;
-        int desX = orderInfo.second.first;
-        int desY = orderInfo.second.second;
+        int whId = orderInfo.getFirst();
+        int desX = orderInfo.getSecond().getFirst();
+        int desY = orderInfo.getSecond().getSecond();
 
         List<AProduct> products = getProducts(packageId);
         Package pkg;
         pkg = new Package(
                 packageId, whId, desX, desY,
-                warehouseMap.get(whId).first,
-                warehouseMap.get(whId).second,
+                warehouseMap.get(whId).getFirst(),
+                warehouseMap.get(whId).getSecond(),
                 products
         );
         return pkg;
@@ -177,13 +175,11 @@ public class Database {
 
     /**
      * Update package status
-     * @param packageId:
-     *                 OrderID
-     * @param status:
-     *              The status of package (String)
-     * @return boolean value of execute status
-     * */
-    public boolean updateStatus(long packageId, String status){
+     *
+     * @param packageId: OrderID
+     * @param status:    The status of package (String)
+     */
+    public void updateStatus(long packageId, String status){
         try {
             Class.forName("org.postgresql.Driver");
             Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
@@ -191,18 +187,49 @@ public class Database {
 
             Statement statement = conn.createStatement();
             statement.executeUpdate(String.format(
-                    "UPDATE %s SET status='%s' WHERE id=%d;",
+                    "UPDATE %s SET status = '%s' WHERE order_id = %d;",
                     TABLE_ORDER, status, packageId)
             );
             conn.commit();
 
             statement.close();
             conn.close();
-            return true;
         }catch (Exception e){
-            System.err.println(e.toString());
+            System.err.println(e.getMessage());
         }
-        return false;
     }
+
+    /**
+     * Get Warehouse details using package id
+     * @param packageId (OrderId)
+     * @return (whID, dest)
+     * */
+    public String getUpsName(long packageId){
+        try {
+            Class.forName("org.postgresql.Driver");
+            Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+            conn.setAutoCommit(false);
+
+            Statement statement = conn.createStatement();
+
+            ResultSet result = statement.executeQuery(
+                    String.format("SELECT ups_account_name FROM %s" +
+                                    "WHERE order_id = %d;",
+                            TABLE_ORDER, packageId)
+            );
+
+            String upsName = result.getString("ups_account_name");
+
+            statement.close();
+            conn.close();
+            return upsName;
+
+        } catch (ClassNotFoundException | SQLException e) {
+            System.err.println(e.getMessage() + ": Get Ups Name error");
+            return "";
+        }
+    }
+
+
 
 }
