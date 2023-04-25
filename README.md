@@ -1,1 +1,1 @@
-# MiniAmazon
+# mini-amazon

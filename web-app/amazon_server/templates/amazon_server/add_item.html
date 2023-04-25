@@ -1,0 +1,18 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <div class="container">
+    {% if user_profile.is_seller %}
+        <h2>Add Item</h2>
+        <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Add Item</button>
+        </form>
+    {% else %}
+    <h2>Only sellers can add items</h2>
+    {% endif %}
+  </div>
+{% endblock %}
+
+

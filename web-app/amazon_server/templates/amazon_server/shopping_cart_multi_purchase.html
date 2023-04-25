@@ -1,0 +1,14 @@
+{% extends 'base_generic.html' %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <ul>
+        {% for item_id, item_data in selected_items.items %}
+            <p>{{ item_data.item.description }}: {{ item_data.quantity }}</p>
+        {% endfor %}
+        </ul>
+        <button type="submit" class="btn btn-primary">Confirm Order</button>
+    </form>
+{% endblock %}

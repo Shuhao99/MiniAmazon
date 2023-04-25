@@ -1,0 +1,23 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <div class="container">
+    <h2>Your Orders</h2>
+    <table class="table">
+      <tbody>
+        {% for row in rows %}
+          <tr>
+            <td>{{ row }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <!-- <p>{{result}}</p> -->
+  </div>
+{% endblock %}
+
+
+
+
+
+

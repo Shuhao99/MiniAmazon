@@ -1,0 +1,17 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <div class="container">
+    {% if user_profile.is_seller %}
+    <h2>You are already a Seller</h2>
+    {% else %}
+    <h2>Become a Seller</h2>
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary">Submit Request</button>
+    </form>
+    {% endif %}
+  </div>
+{% endblock %}
+

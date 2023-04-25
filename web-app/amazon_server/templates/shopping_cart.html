@@ -1,0 +1,24 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <div class="container">
+    <h2>Shopping Cart</h2>
+    {% if shopping_cart_items %}
+      <form method="get" action="{% url 'shopping_cart_multi_purchase' %}">
+        {% csrf_token %}
+        <ul>
+        {% for cart_item in shopping_cart_items %}
+          <li>
+            <input type="checkbox" name="selected_items" value="{{ cart_item.item.id }}">
+            {{ cart_item.item.description }}
+            Quantity: <input type="number" name="count_{{ cart_item.item.id }}" value="{{ cart_item.quantity }}" min="1">
+          </li>
+        {% endfor %}
+        </ul>
+        <button type="submit" class="btn btn-primary">Purchase Selected Items</button>
+      </form>
+    {% else %}
+      <p>Your shopping cart is empty.</p>
+    {% endif %}
+  </div>
+{% endblock %}
