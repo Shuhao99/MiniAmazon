@@ -92,7 +92,7 @@ public class WorldHandler extends Handler implements Runnable {
             }
         }
 
-        // TODO: Package Loaded, tell Ups to deliver
+        // Package Loaded, tell Ups to deliver
         for (ALoaded l : msg.getLoadedList()){
 
             seqNumList.add(l.getSeqnum());
@@ -139,6 +139,11 @@ public class WorldHandler extends Handler implements Runnable {
 
     public void pack(long pkId) throws IOException {
         // send to world
+        // update package status in list
+        packageMap.get(pkId).setStatus(Package.PACKING);
+        // update package status in db
+        mydb.updateStatus(pkId, Package.PACKING);
+
         Package pkg = packageMap.get(pkId);
         long curSeqNum = seqNum.getAndIncrement();
         APack packCmd = APack.newBuilder().
@@ -149,11 +154,6 @@ public class WorldHandler extends Handler implements Runnable {
         ACommands.Builder cmd = ACommands.newBuilder().addTopack(packCmd);
         worldSender.sendCmd(cmd, curSeqNum);
         System.out.println("Tell warehouse to pack: " + pkId);
-
-        // update package status in list
-        packageMap.get(pkId).setStatus(Package.PACKING);
-        // update package status in db
-        mydb.updateStatus(pkId, Package.PACKING);
 
     }
 
@@ -185,29 +185,30 @@ public class WorldHandler extends Handler implements Runnable {
     }
 
     public void upsDeliver(long pkId) throws IOException {
-
+        System.out.println("Tell Ups to deliver: " + pkId);
         Package pkg = packageMap.get(pkId);
 
         long curSeqNum = seqNum.getAndIncrement();
+        pkg.setStatus(Package.DELIVERING);
+        mydb.updateStatus(pkg.getId(), Package.DELIVERING);
 
         // If mock ups
         if (mockUPS){
             try {
+                System.out.println("In try: " + pkId);
                 ups.delivery(pkg.getDesX(), pkg.getDesY(), pkg.getId());
             } catch (IOException e) {
                 System.err.println(e.getMessage());
             }
         }
+        else {
+            AUDeliverRequest deliverCmd = AUDeliverRequest.newBuilder().
+                    setSeqNum(curSeqNum).
+                    setShipId(pkId).
+                    build();
 
-        AUDeliverRequest deliverCmd = AUDeliverRequest.newBuilder().
-                setSeqNum(curSeqNum).
-                setShipId(pkId).
-                build();
-
-        AUCommand.Builder cmd = AUCommand.newBuilder().addDeliverRequests(deliverCmd);
-        upsSender.sendCmd(cmd, curSeqNum);
-        System.out.println("Tell Ups to deliver: " + pkId);
-        pkg.setStatus(Package.DELIVERING);
-        mydb.updateStatus(pkg.getId(), Package.DELIVERING);
+            AUCommand.Builder cmd = AUCommand.newBuilder().addDeliverRequests(deliverCmd);
+            upsSender.sendCmd(cmd, curSeqNum);
+        }
     }
 }

@@ -7,4 +7,3 @@ RUN pip install -r requirements.txt
 RUN pip install --upgrade django-crispy-forms
 ADD . /code/
 
-

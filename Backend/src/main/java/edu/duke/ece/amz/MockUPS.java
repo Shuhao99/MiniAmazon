@@ -30,14 +30,14 @@ public class MockUPS {
     private final OutputStream ups_out;
 
     public MockUPS() throws IOException {
-        worldID = -1;
+        worldID = 0;
         seqNum = 0;
         truckID = 1;
         Socket socket = new Socket(HOST, PORT);
         in = socket.getInputStream();
         out = socket.getOutputStream();
 
-        ups_socket = new Socket("localhost", UPS_SERVER_PORT);
+        ups_socket = new Socket("vcm-32288.vm.duke.edu", UPS_SERVER_PORT);
         ups_in = ups_socket.getInputStream();
         ups_out = ups_socket.getOutputStream();
     }
@@ -46,7 +46,7 @@ public class MockUPS {
         new Thread(() -> {
             // 1. create a new world
             try {
-                connectToWorld(-1);
+                connectToWorld();
             } catch (IOException e) {
                 System.err.println("connect to world: " + e.toString());
             }
@@ -61,45 +61,47 @@ public class MockUPS {
         }).start();
     }
 
-    public void connectToWorld(long worldID) throws IOException {
+    public void connectToWorld() throws IOException {
         // init two trucks
+        int a  = 1;
         UInitTruck.Builder builder = UInitTruck.newBuilder();
-        builder.setId(1);
-        builder.setX(1);
-        builder.setY(1);
+        builder.setId(a);
+        builder.setX(a);
+        builder.setY(a);
 
+        int b = 2;
         UInitTruck.Builder builder1 = UInitTruck.newBuilder();
-        builder1.setId(2);
-        builder1.setX(2);
-        builder1.setY(2);
+        builder1.setId(b);
+        builder1.setX(b);
+        builder1.setY(b);
 
+        int c = 3;
         UInitTruck.Builder builder2 = UInitTruck.newBuilder();
-        builder2.setId(3);
-        builder2.setX(3);
-        builder2.setY(3);
+        builder2.setId(c);
+        builder2.setX(c);
+        builder2.setY(c);
 
         UConnect.Builder connect =  UConnect.newBuilder();
         connect.setIsAmazon(false);
-        connect.addTrucks(builder);
-        connect.addTrucks(builder1);
-        connect.addTrucks(builder2);
-        if (worldID >= 0){
-            connect.setWorldid(worldID);
-        }
-
+        connect.addTrucks(builder.build());
+        connect.addTrucks(builder1.build());
+        connect.addTrucks(builder2.build());
+//        if (worldID >= 0){
+//            connect.setWorldid(worldID);
+//        }
+        System.out.println("UPS try to connect to World...");
         connect.build().writeDelimitedTo(out);
 
         seqNum++;
-        UConnected connected = UConnected.parser().parseFrom(in);
+        UConnected connected = UConnected.parser().parseDelimitedFrom(in);
 
-        this.worldID = connected.getWorldid();
+        this.worldID = (int) connected.getWorldid();
         System.out.println("world id: " + connected.getWorldid());
         System.out.println("result: " + connected.getResult());
 
-        connected.getResult();
     }
 
-    public synchronized void pick(int whID, long packageID) throws IOException {
+    public void pick(int whID, long packageID) throws IOException {
         UCommands.Builder command = UCommands.newBuilder();
 
         UGoPickup.Builder pick = UGoPickup.newBuilder();
@@ -153,7 +155,8 @@ public class MockUPS {
         }
     }
 
-    public synchronized void delivery(int destX, int destY, long packageID) throws IOException {
+    public void delivery(int destX, int destY, long packageID) throws IOException {
+
         UCommands.Builder command = UCommands.newBuilder();
 
         UGoDeliver.Builder delivery = UGoDeliver.newBuilder();
@@ -161,11 +164,12 @@ public class MockUPS {
         delivery.addPackages(UDeliveryLocation.newBuilder().setPackageid(packageID).setX(destX).setY(destY));
         delivery.setSeqnum(seqNum);
         command.addDeliveries(delivery);
-
+        command.setSimspeed(100);
+        System.out.println("UPS tell world to deliver");
         command.build().writeDelimitedTo(out);
         seqNum++;
         UResponses responses = UResponses.parser().parseDelimitedFrom(in);
-
+        System.out.println("UPS deliver get new response: ");
         System.out.println(responses.toString());
 
         if (responses.getDeliveredCount() == 0){

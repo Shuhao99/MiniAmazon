@@ -6,3 +6,4 @@ RUN apt-get update && apt-get install -yq --no-install-recommends gradle && apt-
 RUN mkdir /Backend
 WORKDIR /Backend
 ADD . /Backend
+RUN chmod +x ./gradlew

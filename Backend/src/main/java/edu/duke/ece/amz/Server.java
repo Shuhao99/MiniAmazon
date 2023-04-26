@@ -54,13 +54,16 @@ public class Server {
         Socket worldSocket = new Socket(WORLD_HOST, WORLD_PORT);
         worldSender = new WorldSender(worldSocket, this.schedulerMap);
         worldIn = worldSocket.getInputStream();
+        Listener upsListener = new Listener(LSN_UPS_ON);
 
         UPS = new MockUPS();
         mydb = new Database();
+
         if(mockUps){
             UPS.init();
         }
-        Socket upsSocket = new Listener(LSN_UPS_ON).accept();
+
+        Socket upsSocket = upsListener.accept();
         upsIn = upsSocket.getInputStream();
         upsSender = new UpsSender(upsSocket, schedulerMap);
 
@@ -71,8 +74,6 @@ public class Server {
             System.err.println("Run world simulator first");
             exit(1);
         }
-
-        //TODO: Create thread to purchase all items we have
     }
 
     // Connect to world

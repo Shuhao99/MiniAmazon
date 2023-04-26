@@ -39,8 +39,8 @@ services:
       build: ./Backend
       command: bash -c "./gradlew run"
       ports:
-        - "7777:7777" # port for UPS
-        - "8888:8888" # port for web
+        - "7777:7777" 
+        - "8888:8888" 
       depends_on:
         - web
 volumes:

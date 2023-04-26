@@ -25,10 +25,10 @@ public abstract class Sender {
         if (msg.getDescriptorForType() == WorldAmazon.ACommands.getDescriptor()) {
             WorldAmazon.ACommands.Builder commands = (WorldAmazon.ACommands.Builder) msg;
             commands.setSimspeed(100);
-            System.out.println("amazon sending(to world): " + seqNum);
+            System.out.println("amazon sending (to world): " + seqNum);
         }
         else {
-            System.out.println("Ups sending(to world): " + seqNum);
+            System.out.println("amazon sending (to ups): " + seqNum);
         }
         msg.build().writeDelimitedTo(out);
 
@@ -40,7 +40,7 @@ public abstract class Sender {
             @Override
             public void run() {
                 try {
-                    System.out.println("amazon sending(to world): " + seqNum);
+                    System.out.println("amazon resending: " + seqNum);
                     msg.build().writeDelimitedTo(out);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
