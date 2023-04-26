@@ -1,0 +1,14 @@
+{% extends 'base_generic.html' %}
+
+{% block content %}
+  <h2>Delivered Items</h2>
+  <ul>
+    {% for ordered_item in ordered_items %}
+      <li>
+        <a href="{% url 'comment_form' ordered_item.pk %}">
+          {{ ordered_item.item.description }} - {{ ordered_item.count }} - Order ID: {{ ordered_item.order.order_id }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from amazon_server.views import login_view, logout_view, register_view, become_seller, add_item, home, browse_view, search_view, purchase_view, multi_purchase_view, user_orders, shopping_cart_view, shopping_cart_multi_purchase_view, place_order_failed_view
+from amazon_server.views import login_view, logout_view, register_view, become_seller, add_item, home, browse_view, search_view, purchase_view, multi_purchase_view, user_orders, shopping_cart_view, shopping_cart_multi_purchase_view, place_order_failed_view, delivered_items, comment_form
 urlpatterns = [
     path("", home, name="home"),
     path('admin/', admin.site.urls),
@@ -33,5 +33,7 @@ urlpatterns = [
     path('shopping_cart/', shopping_cart_view, name='shopping_cart'),
     path('shopping_cart_multi_purchase', shopping_cart_multi_purchase_view, name='shopping_cart_multi_purchase'),
     path('place_order_failed', place_order_failed_view, name='place_order_failed'),
+    path('delivered_items/', delivered_items, name='delivered_items'),
+    path('delivered_items/<int:ordered_item_id>/comment', comment_form, name='comment_form'),
 ]
 

@@ -12,6 +12,13 @@
           <input type="checkbox" name="selected_items" value="{{ item.id }}">
           {{ item.description }}
           Quantity: <input type="number" name="count_{{ item.id }}" value="1" min="1">
+          <ul>
+            {% for comment in comments %}
+              {% if comment.item == item %}
+                <li>{{ comment.buyer.username }}: {{ comment.content }}</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
         </li>
       {% endfor %}
       </ul>
@@ -26,6 +33,13 @@
           <input type="checkbox" name="selected_items" value="{{ item.id }}">
           {{ item.description }}
           Quantity: <input type="number" name="count_{{ item.id }}" value="1" min="1">
+          <ul>
+            {% for comment in comments %}
+              {% if comment.item == item %}
+                <li>{{ comment.buyer.username }}: {{ comment.content }}</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
         </li>
       {% endfor %}
       </ul>

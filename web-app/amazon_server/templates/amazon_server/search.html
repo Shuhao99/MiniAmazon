@@ -15,6 +15,13 @@
           <input type="checkbox" name="selected_items" value="{{ item.id }}">
           {{ item.description }}
           Quantity: <input type="number" name="count_{{ item.id }}" value="1" min="1">
+          {% if item.comments.all %}
+            <ul>
+              {% for comment in item.comments.all %}
+                <li>{{ comment.user.username }}: {{ comment.content }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
         </li>
       {% endfor %}
       </ul>

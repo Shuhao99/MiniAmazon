@@ -4,11 +4,11 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import BecomeSellerForm, AddItemForm, MultiPurchaseForm, ConfirmOrderForm
+from .forms import BecomeSellerForm, AddItemForm, MultiPurchaseForm, ConfirmOrderForm, CommentForm
 from .models import Ordered_Items, UserProfile, Item, ShoppingCartItem
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
-from .models import WareHouse, Order, Ordered_Items
+from .models import WareHouse, Order, Ordered_Items, Comment
 from .forms import PurchaseForm
 from django.db.models import Func
 from django.db import models
@@ -134,7 +134,9 @@ def add_item(request):
 @login_required
 def browse_view(request):
     items = Item.objects.all()
-    return render(request, 'amazon_server/browse.html', {'items': items})
+    comments = Comment.objects.all()
+    context = {'items': items, 'comments': comments}
+    return render(request, 'amazon_server/browse.html', context)
 
 @login_required
 def place_order_failed_view(request):
@@ -147,7 +149,8 @@ def search_view(request):
         items = Item.objects.filter(description__icontains=query)
     else:
         items = None
-    return render(request, 'amazon_server/search.html', {'items': items, 'query': query})
+    comments = Comment.objects.all()
+    return render(request, 'amazon_server/search.html', {'items': items, 'query': query, 'comments':comments})
 
 @login_required
 def purchase_view(request, item_id):
@@ -346,3 +349,24 @@ def shopping_cart_multi_purchase_view(request):
         'selected_items': selected_items_with_quantities,
     }
     return render(request, 'amazon_server/shopping_cart_multi_purchase.html', context)
+
+def delivered_items(request):
+    delivered_orders = Order.objects.filter(status='delivered')
+    ordered_items = Ordered_Items.objects.filter(order__in=delivered_orders)
+
+    context = {'ordered_items': ordered_items}
+    return render(request, 'delivered_items.html', context)
+
+def comment_form(request, ordered_item_id):
+    ordered_item = Ordered_Items.objects.get(pk=ordered_item_id)
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            new_comment = form.save(commit=False)
+            new_comment.buyer = request.user
+            new_comment.item = ordered_item.item
+            new_comment.save()
+            return redirect('delivered_items')
+    else:
+        form = CommentForm()
+    return render(request, 'comment_form.html', {'form': form, 'ordered_item': ordered_item})

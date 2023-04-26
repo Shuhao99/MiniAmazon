@@ -1,5 +1,5 @@
 from django import forms
-from .models import Item
+from .models import Item, Comment
 class BecomeSellerForm(forms.Form):
     confirm = forms.BooleanField(
         required=True,
@@ -38,3 +38,8 @@ class ConfirmOrderForm(forms.Form):
     x_cord = forms.IntegerField(label="X Coordinate", min_value=0)
     y_cord = forms.IntegerField(label="Y Coordinate", min_value=0)
     ups_account_id = forms.CharField(label="UPS Account Id", required=False) 
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']

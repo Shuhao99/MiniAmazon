@@ -65,3 +65,14 @@ class ShoppingCartItem(models.Model):
     class Meta:
         unique_together = ('user', 'item')
         db_table = 'shoppingcartitem'
+
+class Comment(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    buyer = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+
+    def __str__(self):
+        return f"<Comment by {self.buyer} on {self.item}>"
+
+    class Meta:
+        db_table = 'comment'
