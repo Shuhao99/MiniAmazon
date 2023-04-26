@@ -17,6 +17,8 @@ from .models import WareHouse
 import socket
 from django.http import HttpResponseRedirect
 import time
+from django.urls import reverse
+
 
 def send_order_to_daemon(order_id):
     daemon_ip = 'vcm-32288.vm.duke.edu'
@@ -238,24 +240,27 @@ def multi_purchase_view(request):
 @login_required
 def user_orders(request):
     orders = Order.objects.filter(buyer=request.user)
-    rows = []
+    order_items = []
+
     for order in orders:
-        rows.append("Package id / Tracking Number: " + str(order.order_id))
-        rows.append("Warehouse Coordinates: " + str(order.warehouse.x_cord) + ", " + str(order.warehouse.y_cord))
-        rows.append("Status: " + order.status) 
-        rows.append("Destination Coordinates: " + str(order.dest_x) + ", " + str(order.dest_y))
-        if order.ups_account_name:  # Display UPS account name if it exists
-            rows.append("UPS Account Name: " + order.ups_account_name)
-        if order.package_id:  # Display package id if it exists
-            rows.append("Package ID: " + str(order.package_id))
         items = Ordered_Items.objects.filter(order=order)
+        order_data = {
+            'order': order,
+            'items': []
+        }
         for item in items:
-            rows.append(item.item.description + " " + "*" + " " + str(item.count)) 
-        rows.append("----------------------------------------")
-    result = ''
-    for i in rows:
-        result += i
-    return render(request, 'user_orders.html', {'rows': rows, 'result': result})
+            item_data = {
+                'item': item,
+                'comment_url': None
+            }
+            if order.status == 'delivered':
+                item_data['comment_url'] = reverse('comment_form', args=[item.pk])
+            order_data['items'].append(item_data)
+        order_items.append(order_data)
+
+    return render(request, 'user_orders.html', {'order_items': order_items})
+
+
 
 
 @login_required
