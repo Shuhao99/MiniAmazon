@@ -14,8 +14,8 @@ import static java.lang.System.exit;
 
 
 public class Server {
-    private static final String WORLD_HOST = "vcm-32288.vm.duke.edu";
-    private static final int WORLD_PORT = 23456;
+    private static final String WORLD_HOST = "vcm-30632.vm.duke.edu";
+    private static final int WORLD_PORT = 23459;
 
     private static final int LSN_UPS_ON = 7777;
 //    private static final int SEND_UPS_ON = 6666;
@@ -38,7 +38,7 @@ public class Server {
 //    private final List<AInitWarehouse> warehouseList;
 
     private final Database mydb;
-    private final boolean mockUps = true;
+    private final boolean mockUps = false;
 
 
 
@@ -56,11 +56,15 @@ public class Server {
         worldIn = worldSocket.getInputStream();
         Listener upsListener = new Listener(LSN_UPS_ON);
 
-        UPS = new MockUPS();
+
         mydb = new Database();
 
         if(mockUps){
+            UPS = new MockUPS();
             UPS.init();
+        }
+        else {
+            UPS = null;
         }
 
         Socket upsSocket = upsListener.accept();

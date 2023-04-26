@@ -218,7 +218,10 @@ public class Database {
                             TABLE_ORDER, packageId)
             );
 
-            String upsName = result.getString("ups_account_name");
+            String upsName = "";
+            while (result.next()) {
+                upsName = result.getString("ups_account_name");
+            }
 
             statement.close();
             conn.close();
