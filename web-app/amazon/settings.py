@@ -81,7 +81,7 @@ DATABASES = {
         'NAME': 'amazon_db',
         'USER': 'cy141',
         'PASSWORD': 'passw@rd!',
-        'HOST': 'localhost',  # Use 'localhost' if your PostgreSQL server is on the same machine
+        'HOST': 'db',  # Use 'localhost' if your PostgreSQL server is on the same machine
         'PORT': '5432',  # Default PostgreSQL port is 5432
     }
 }
