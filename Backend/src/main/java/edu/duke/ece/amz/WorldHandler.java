@@ -158,7 +158,6 @@ public class WorldHandler extends Handler implements Runnable {
     }
 
     public void upsPickUp(long pkId) throws IOException {
-
         Package pkg = packageMap.get(pkId);
 
         long curSeqNum = seqNum.getAndIncrement();
@@ -166,7 +165,10 @@ public class WorldHandler extends Handler implements Runnable {
         if (mockUPS){
             this.ups.pick(pkg.getWhID(), pkId);
         }
+
         String upsName = mydb.getUpsName(pkId);
+
+        String word = "Cao ni ma ya";
 
         AUPickupRequest pickCmd = AUPickupRequest.newBuilder().
                 setSeqNum(curSeqNum).
@@ -177,11 +179,12 @@ public class WorldHandler extends Handler implements Runnable {
                 setDestinationX(pkg.getDesX()).
                 setDestinationY(pkg.getDesY()).
                 setUpsName(upsName).
+                setItems(word).
                 build();
-
         AUCommand.Builder cmd = AUCommand.newBuilder().addPickupRequests(pickCmd);
+        System.out.println("Tell Ups to pick: " + cmd);
         upsSender.sendCmd(cmd, curSeqNum);
-        System.out.println("Tell Ups to pick: " + pkId);
+
     }
 
     public void upsDeliver(long pkId) throws IOException {

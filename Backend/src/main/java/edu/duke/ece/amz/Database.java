@@ -12,7 +12,7 @@ public class Database {
     private static final String TABLE_WAREHOUSE = "warehouse";
 
     // database configuration
-    private static final String dbUrl = "jdbc:postgresql://db:5432/amazon_db";
+    private static final String dbUrl = "jdbc:postgresql://localhost:5432/amazon_db";
     private static final String dbUser = "cy141";
     private static final String dbPassword = "passw@rd!";
 
@@ -218,7 +218,10 @@ public class Database {
                             TABLE_ORDER, packageId)
             );
 
-            String upsName = result.getString("ups_account_name");
+            String upsName = "";
+            while (result.next()) {
+                upsName = result.getString("ups_account_name");
+            }
 
             statement.close();
             conn.close();
