@@ -3,21 +3,30 @@
 {% block content %}
   <div class="container">
     <h2>Your Orders</h2>
-    <table class="table">
-      <tbody>
-        {% for row in rows %}
+    {% for order_data in order_items %}
+      <h3>Order ID: {{ order_data.order.order_id }}</h3>
+      <table class="table">
+        <thead>
           <tr>
-            <td>{{ row }}</td>
+            <th>Item Description</th>
+            <th>Quantity</th>
+            <th>Comment</th>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    <!-- <p>{{result}}</p> -->
+        </thead>
+        <tbody>
+          {% for item_data in order_data.items %}
+            <tr>
+              <td>{{ item_data.item.item.description }}</td>
+              <td>{{ item_data.item.count }}</td>
+              <td>
+                {% if item_data.comment_url %}
+                  <a href="{{ item_data.comment_url }}">Comment on this item</a>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endfor %}
   </div>
 {% endblock %}
-
-
-
-
-
-

@@ -2,7 +2,7 @@
 /.gradle
 # Compiled class file
 *.class
-
+*.hprof
 # Log file
 *.log
 

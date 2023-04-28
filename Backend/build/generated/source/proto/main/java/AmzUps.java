@@ -4148,6 +4148,23 @@ public final class AmzUps {
      */
     com.google.protobuf.ByteString
         getUpsNameBytes();
+
+    /**
+     * <code>required string items = 9;</code>
+     * @return Whether the items field is set.
+     */
+    boolean hasItems();
+    /**
+     * <code>required string items = 9;</code>
+     * @return The items.
+     */
+    java.lang.String getItems();
+    /**
+     * <code>required string items = 9;</code>
+     * @return The bytes for items.
+     */
+    com.google.protobuf.ByteString
+        getItemsBytes();
   }
   /**
    * <pre>
@@ -4167,6 +4184,7 @@ public final class AmzUps {
     }
     private AUPickupRequest() {
       upsName_ = "";
+      items_ = "";
     }
 
     @java.lang.Override
@@ -4388,6 +4406,55 @@ public final class AmzUps {
       }
     }
 
+    public static final int ITEMS_FIELD_NUMBER = 9;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object items_ = "";
+    /**
+     * <code>required string items = 9;</code>
+     * @return Whether the items field is set.
+     */
+    @java.lang.Override
+    public boolean hasItems() {
+      return ((bitField0_ & 0x00000100) != 0);
+    }
+    /**
+     * <code>required string items = 9;</code>
+     * @return The items.
+     */
+    @java.lang.Override
+    public java.lang.String getItems() {
+      java.lang.Object ref = items_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          items_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>required string items = 9;</code>
+     * @return The bytes for items.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getItemsBytes() {
+      java.lang.Object ref = items_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        items_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -4423,6 +4490,10 @@ public final class AmzUps {
         memoizedIsInitialized = 0;
         return false;
       }
+      if (!hasItems()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -4453,6 +4524,9 @@ public final class AmzUps {
       }
       if (((bitField0_ & 0x00000080) != 0)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 8, upsName_);
+      }
+      if (((bitField0_ & 0x00000100) != 0)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 9, items_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -4493,6 +4567,9 @@ public final class AmzUps {
       }
       if (((bitField0_ & 0x00000080) != 0)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, upsName_);
+      }
+      if (((bitField0_ & 0x00000100) != 0)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, items_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -4549,6 +4626,11 @@ public final class AmzUps {
         if (!getUpsName()
             .equals(other.getUpsName())) return false;
       }
+      if (hasItems() != other.hasItems()) return false;
+      if (hasItems()) {
+        if (!getItems()
+            .equals(other.getItems())) return false;
+      }
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -4593,6 +4675,10 @@ public final class AmzUps {
       if (hasUpsName()) {
         hash = (37 * hash) + UPSNAME_FIELD_NUMBER;
         hash = (53 * hash) + getUpsName().hashCode();
+      }
+      if (hasItems()) {
+        hash = (37 * hash) + ITEMS_FIELD_NUMBER;
+        hash = (53 * hash) + getItems().hashCode();
       }
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
@@ -4735,6 +4821,7 @@ public final class AmzUps {
         destinationX_ = 0;
         destinationY_ = 0;
         upsName_ = "";
+        items_ = "";
         return this;
       }
 
@@ -4801,6 +4888,10 @@ public final class AmzUps {
           result.upsName_ = upsName_;
           to_bitField0_ |= 0x00000080;
         }
+        if (((from_bitField0_ & 0x00000100) != 0)) {
+          result.items_ = items_;
+          to_bitField0_ |= 0x00000100;
+        }
         result.bitField0_ |= to_bitField0_;
       }
 
@@ -4842,6 +4933,11 @@ public final class AmzUps {
           bitField0_ |= 0x00000080;
           onChanged();
         }
+        if (other.hasItems()) {
+          items_ = other.items_;
+          bitField0_ |= 0x00000100;
+          onChanged();
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -4868,6 +4964,9 @@ public final class AmzUps {
           return false;
         }
         if (!hasDestinationY()) {
+          return false;
+        }
+        if (!hasItems()) {
           return false;
         }
         return true;
@@ -4929,6 +5028,11 @@ public final class AmzUps {
                 bitField0_ |= 0x00000080;
                 break;
               } // case 66
+              case 74: {
+                items_ = input.readBytes();
+                bitField0_ |= 0x00000100;
+                break;
+              } // case 74
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -5334,6 +5438,86 @@ public final class AmzUps {
         if (value == null) { throw new NullPointerException(); }
         upsName_ = value;
         bitField0_ |= 0x00000080;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object items_ = "";
+      /**
+       * <code>required string items = 9;</code>
+       * @return Whether the items field is set.
+       */
+      public boolean hasItems() {
+        return ((bitField0_ & 0x00000100) != 0);
+      }
+      /**
+       * <code>required string items = 9;</code>
+       * @return The items.
+       */
+      public java.lang.String getItems() {
+        java.lang.Object ref = items_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          if (bs.isValidUtf8()) {
+            items_ = s;
+          }
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>required string items = 9;</code>
+       * @return The bytes for items.
+       */
+      public com.google.protobuf.ByteString
+          getItemsBytes() {
+        java.lang.Object ref = items_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          items_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>required string items = 9;</code>
+       * @param value The items to set.
+       * @return This builder for chaining.
+       */
+      public Builder setItems(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        items_ = value;
+        bitField0_ |= 0x00000100;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required string items = 9;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearItems() {
+        items_ = getDefaultInstance().getItems();
+        bitField0_ = (bitField0_ & ~0x00000100);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required string items = 9;</code>
+       * @param value The bytes for items to set.
+       * @return This builder for chaining.
+       */
+      public Builder setItemsBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        items_ = value;
+        bitField0_ |= 0x00000100;
         onChanged();
         return this;
       }
@@ -8119,17 +8303,17 @@ public final class AmzUps {
       "and\022$\n\014loadRequests\030\001 \003(\0132\016.UALoadReques" +
       "t\022\037\n\tdelivered\030\002 \003(\0132\014.UADelivered\022\014\n\004ac" +
       "ks\030\003 \003(\003\022\023\n\005error\030\004 \003(\0132\004.Err\"*\n\007UAstart" +
-      "\022\017\n\007worldid\030\001 \002(\003\022\016\n\006seqnum\030\002 \002(\003\"\231\001\n\017AU" +
+      "\022\017\n\007worldid\030\001 \002(\003\022\016\n\006seqnum\030\002 \002(\003\"\250\001\n\017AU" +
       "PickupRequest\022\016\n\006seqNum\030\001 \002(\003\022\016\n\006shipId\030" +
       "\002 \002(\003\022\023\n\013warehouseId\030\003 \002(\005\022\t\n\001x\030\004 \002(\005\022\t\n" +
       "\001y\030\005 \002(\005\022\024\n\014destinationX\030\006 \002(\005\022\024\n\014destin" +
-      "ationY\030\007 \002(\005\022\017\n\007upsName\030\010 \001(\t\"@\n\rUALoadR" +
-      "equest\022\016\n\006seqNum\030\001 \002(\003\022\017\n\007truckId\030\002 \002(\005\022" +
-      "\016\n\006shipId\030\003 \002(\003\"2\n\020AUDeliverRequest\022\016\n\006s" +
-      "eqNum\030\001 \002(\003\022\016\n\006shipId\030\002 \002(\003\"-\n\013UADeliver" +
-      "ed\022\016\n\006seqNum\030\001 \002(\003\022\016\n\006shipId\030\002 \002(\003\"8\n\003Er" +
-      "r\022\013\n\003err\030\001 \002(\t\022\024\n\014originSeqNum\030\002 \002(\003\022\016\n\006" +
-      "seqNum\030\003 \002(\003"
+      "ationY\030\007 \002(\005\022\017\n\007upsName\030\010 \001(\t\022\r\n\005items\030\t" +
+      " \002(\t\"@\n\rUALoadRequest\022\016\n\006seqNum\030\001 \002(\003\022\017\n" +
+      "\007truckId\030\002 \002(\005\022\016\n\006shipId\030\003 \002(\003\"2\n\020AUDeli" +
+      "verRequest\022\016\n\006seqNum\030\001 \002(\003\022\016\n\006shipId\030\002 \002" +
+      "(\003\"-\n\013UADelivered\022\016\n\006seqNum\030\001 \002(\003\022\016\n\006shi" +
+      "pId\030\002 \002(\003\"8\n\003Err\022\013\n\003err\030\001 \002(\t\022\024\n\014originS" +
+      "eqNum\030\002 \002(\003\022\016\n\006seqNum\030\003 \002(\003"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -8158,7 +8342,7 @@ public final class AmzUps {
     internal_static_AUPickupRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_AUPickupRequest_descriptor,
-        new java.lang.String[] { "SeqNum", "ShipId", "WarehouseId", "X", "Y", "DestinationX", "DestinationY", "UpsName", });
+        new java.lang.String[] { "SeqNum", "ShipId", "WarehouseId", "X", "Y", "DestinationX", "DestinationY", "UpsName", "Items", });
     internal_static_UALoadRequest_descriptor =
       getDescriptor().getMessageTypes().get(4);
     internal_static_UALoadRequest_fieldAccessorTable = new

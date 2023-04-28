@@ -12,29 +12,31 @@
 <body>
   <div class="container-fluid">
     <div class="row">
-      <div class="col-sm-2">
-      {% block sidebar %}
-        <ul class="sidebar-nav">
-          <li><a href="{% url 'home' %}">Home</a></li>
-          {% if user.is_authenticated %}
-            <li><a href="{% url 'logout' %}">Logout</a></li>
-            <li><a href="{% url 'become_seller' %}">Become Seller</a></li>
-            <li><a href="{% url 'add_item' %}">Add Item</a></li>
-            <li><a href="{% url 'browse' %}">Browse all items</a></li>
-            <li><a href="{% url 'search' %}">Search items</a></li>
-            <li><a href="{% url 'user_orders' %}">Orders</a></li>
-            <li><a href="{% url 'shopping_cart' %}">Shopping Cart</a></li>
-            <li><a href="{% url 'delivered_items' %}">Make Comments</a></li>
-            <li>User: {{ user.get_username }}</li>
-          {% else %}
-            <li><a href="{% url 'login' %}?next={{ request.path }}">Login</a></li>
-          {% endif %}
-          
-        
-        </ul>
-     {% endblock %}
-      </div>
-      <div class="col-sm-10 ">{% block content %}{% endblock %}</div>
+      <nav class="col-sm-2 bg-light sidebar py-5">
+        {% block sidebar %}
+          <ul class="nav flex-column">
+            <li class="nav-item mb-2"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+            {% if user.is_authenticated %}
+              <li class="nav-item mb-2"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+              <li class="nav-item mb-2"><a class="nav-link" href="{% url 'become_seller' %}">Become Seller</a></li>
+              <li class="nav-item mb-2"><a class="nav-link" href="{% url 'add_item' %}">Sell</a></li>
+              <li class="nav-item mb-2"><a class="nav-link" href="{% url 'browse' %}">Browse all items</a></li>
+              <li class="nav-item mb-2"><a class="nav-link" href="{% url 'search' %}">Search items</a></li>
+              <li class="nav-item mb-2"><a class="nav-link" href="{% url 'user_orders' %}">Orders</a></li>
+              <li class="nav-item mb-2"><a class="nav-link" href="{% url 'shopping_cart' %}">Shopping Cart</a></li>
+              <li class="nav-item mb-2"><a class="nav-link" href="{% url 'delivered_items' %}">Make Comments</a></li>
+              <li class="nav-item mb-2"><span class="nav-link">User: {{ user.get_username }}</span></li>
+            {% else %}
+              <li class="nav-item mb-2"><a class="nav-link" href="{% url 'login' %}?next={{ request.path }}">Login</a></li>
+            {% endif %}
+          </ul>
+        {% endblock %}
+        </nav>      
+      <main class="col-sm-10">
+        <div class="container my-4">
+          {% block content %}{% endblock %}
+        </div>
+      </main>
     </div>
   </div>
 </body>
