@@ -239,7 +239,7 @@ def multi_purchase_view(request):
 
 @login_required
 def user_orders(request):
-    orders = Order.objects.filter(buyer=request.user)
+    orders = Order.objects.filter(buyer=request.user).order_by("order_id")
     order_items = []
 
     for order in orders:
@@ -356,7 +356,7 @@ def shopping_cart_multi_purchase_view(request):
     return render(request, 'amazon_server/shopping_cart_multi_purchase.html', context)
 
 def delivered_items(request):
-    delivered_orders = Order.objects.filter(status='delivered')
+    delivered_orders = Order.objects.filter(status='delivered').order_by("order_id")
     ordered_items = Ordered_Items.objects.filter(order__in=delivered_orders)
 
     context = {'ordered_items': ordered_items}

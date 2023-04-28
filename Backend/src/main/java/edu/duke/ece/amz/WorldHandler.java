@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Timer;
 import java.util.concurrent.atomic.AtomicLong;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 // client side only use one socket, require socket in, socket out, package ID to build a thread
 public class WorldHandler extends Handler implements Runnable {
@@ -168,7 +170,8 @@ public class WorldHandler extends Handler implements Runnable {
 
         String upsName = mydb.getUpsName(pkId);
 
-        String word = "Cao ni ma ya";
+        ObjectMapper objectMapper = new ObjectMapper();
+        String items = objectMapper.writeValueAsString(packageMap.get(pkId).getItems());
 
         AUPickupRequest pickCmd = AUPickupRequest.newBuilder().
                 setSeqNum(curSeqNum).
@@ -179,7 +182,7 @@ public class WorldHandler extends Handler implements Runnable {
                 setDestinationX(pkg.getDesX()).
                 setDestinationY(pkg.getDesY()).
                 setUpsName(upsName).
-                setItems(word).
+                setItems(items).
                 build();
         AUCommand.Builder cmd = AUCommand.newBuilder().addPickupRequests(pickCmd);
         System.out.println("Tell Ups to pick: " + cmd);

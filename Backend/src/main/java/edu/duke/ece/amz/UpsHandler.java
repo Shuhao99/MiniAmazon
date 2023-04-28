@@ -40,7 +40,7 @@ public class UpsHandler extends Handler implements Runnable {
             if (pkg.getTruckID() != -1){
                 continue;
             }
-            System.out.println(req.getShipId() + ": Truck Arrived.");
+            System.out.println(req.getShipId() + ": Truck Arrived." + req.getSeqNum());
             pkg.setTruckID(req.getTruckId());
 
             // Check if package is packed
@@ -57,6 +57,7 @@ public class UpsHandler extends Handler implements Runnable {
 
         // Package Delivered update package status, remove package from package list
         for (UADelivered d : msg.getDeliveredList()){
+            seqNumList.add(d.getSeqNum());
             if (packageMap.containsKey(d.getShipId())){
                 System.out.println(d.getShipId() + ": Delivered");
                 mydb.updateStatus(d.getShipId(), Package.DELIVERED);
@@ -76,7 +77,7 @@ public class UpsHandler extends Handler implements Runnable {
         if(seqNumList.size() > 0){
             try {
                 AUCommand.Builder cmd = AUCommand.newBuilder().addAllAcks(seqNumList);
-                worldSender.sendACK(cmd);
+                upsSender.sendACK(cmd);
             } catch (IOException e) {
                 System.err.println(e.getMessage());
             }

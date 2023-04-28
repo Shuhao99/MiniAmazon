@@ -106,6 +106,34 @@ public class Database {
         }
     }
 
+    public List<String> getItems(long packageId){
+        try {
+            Class.forName("org.postgresql.Driver");
+            Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+            conn.setAutoCommit(false);
+
+            Statement statement = conn.createStatement();
+
+            ResultSet result = statement.executeQuery(
+                    String.format("SELECT items.description FROM %s AS order_info LEFT JOIN %s AS items ON order_info.item_id = items.id" +
+                                    " WHERE order_info.order_id = %d;",
+                            TABLE_ORDER_ITEMS, TABLE_ITEM, packageId)
+            );
+
+            List<String> des_list = new ArrayList<>();
+            if(result.next()){
+                des_list.add(result.getString("description"));
+            }
+            statement.close();
+            conn.close();
+            return des_list;
+
+        } catch (ClassNotFoundException | SQLException e) {
+            System.err.println(e.getMessage() + "This 1");
+            return null;
+        }
+    }
+
     /**
      * get all products in a package
      * @param packageId (OrderID)
@@ -168,7 +196,8 @@ public class Database {
                 packageId, whId, desX, desY,
                 warehouseMap.get(whId).getFirst(),
                 warehouseMap.get(whId).getSecond(),
-                products
+                products,
+                getItems(packageId)
         );
         return pkg;
     }

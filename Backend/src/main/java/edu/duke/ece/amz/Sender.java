@@ -59,7 +59,7 @@ public abstract class Sender {
             System.out.println("amazon tell world acked.");
         }
         else {
-            System.out.println("Ups tell world acked.");
+            System.out.println("tell ups acked:" + commands.build());
         }
         commands.build().writeDelimitedTo(out);
 

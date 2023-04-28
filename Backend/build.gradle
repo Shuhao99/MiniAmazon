@@ -22,13 +22,16 @@ dependencies {
     compile group: 'org.postgresql', name: 'postgresql', version: '42.2.12'
     // https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java
     compile group: 'com.google.protobuf', name: 'protobuf-java', version: '3.21.12'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.0'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.0'
 
 }
 
 application {
     mainClassName = 'edu.duke.ece.amz.Server'
 }
-
+//
 //plugins {
 //    id "com.google.protobuf" version "0.8.10"
 //    id 'java'

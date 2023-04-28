@@ -25,13 +25,15 @@ public class Package {
     private int whY;
     private String status;
     private List<AProduct> products;
+    private List<String> items;
 
 
     public Package(
             long id, int whID,
             int desX, int desY,
             int whX, int whY,
-            List<AProduct> products
+            List<AProduct> products,
+            List<String> items
     ) {
         this.id = id;
         this.whID = whID;
@@ -42,6 +44,7 @@ public class Package {
         this.whY = whY;
         this.status = PROCESSING;
         this.products = products;
+        this.items = items;
     }
 
 

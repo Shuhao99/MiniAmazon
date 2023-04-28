@@ -4150,21 +4150,29 @@ public final class AmzUps {
         getUpsNameBytes();
 
     /**
-     * <code>required string items = 9;</code>
-     * @return Whether the items field is set.
+     * <code>repeated string items = 9;</code>
+     * @return A list containing the items.
      */
-    boolean hasItems();
+    java.util.List<java.lang.String>
+        getItemsList();
     /**
-     * <code>required string items = 9;</code>
-     * @return The items.
+     * <code>repeated string items = 9;</code>
+     * @return The count of items.
      */
-    java.lang.String getItems();
+    int getItemsCount();
     /**
-     * <code>required string items = 9;</code>
-     * @return The bytes for items.
+     * <code>repeated string items = 9;</code>
+     * @param index The index of the element to return.
+     * @return The items at the given index.
+     */
+    java.lang.String getItems(int index);
+    /**
+     * <code>repeated string items = 9;</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the items at the given index.
      */
     com.google.protobuf.ByteString
-        getItemsBytes();
+        getItemsBytes(int index);
   }
   /**
    * <pre>
@@ -4184,7 +4192,8 @@ public final class AmzUps {
     }
     private AUPickupRequest() {
       upsName_ = "";
-      items_ = "";
+      items_ =
+          com.google.protobuf.LazyStringArrayList.emptyList();
     }
 
     @java.lang.Override
@@ -4408,51 +4417,39 @@ public final class AmzUps {
 
     public static final int ITEMS_FIELD_NUMBER = 9;
     @SuppressWarnings("serial")
-    private volatile java.lang.Object items_ = "";
+    private com.google.protobuf.LazyStringArrayList items_ =
+        com.google.protobuf.LazyStringArrayList.emptyList();
     /**
-     * <code>required string items = 9;</code>
-     * @return Whether the items field is set.
+     * <code>repeated string items = 9;</code>
+     * @return A list containing the items.
      */
-    @java.lang.Override
-    public boolean hasItems() {
-      return ((bitField0_ & 0x00000100) != 0);
+    public com.google.protobuf.ProtocolStringList
+        getItemsList() {
+      return items_;
     }
     /**
-     * <code>required string items = 9;</code>
-     * @return The items.
+     * <code>repeated string items = 9;</code>
+     * @return The count of items.
      */
-    @java.lang.Override
-    public java.lang.String getItems() {
-      java.lang.Object ref = items_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          items_ = s;
-        }
-        return s;
-      }
+    public int getItemsCount() {
+      return items_.size();
     }
     /**
-     * <code>required string items = 9;</code>
-     * @return The bytes for items.
+     * <code>repeated string items = 9;</code>
+     * @param index The index of the element to return.
+     * @return The items at the given index.
      */
-    @java.lang.Override
+    public java.lang.String getItems(int index) {
+      return items_.get(index);
+    }
+    /**
+     * <code>repeated string items = 9;</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the items at the given index.
+     */
     public com.google.protobuf.ByteString
-        getItemsBytes() {
-      java.lang.Object ref = items_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        items_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
+        getItemsBytes(int index) {
+      return items_.getByteString(index);
     }
 
     private byte memoizedIsInitialized = -1;
@@ -4490,10 +4487,6 @@ public final class AmzUps {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (!hasItems()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -4525,8 +4518,8 @@ public final class AmzUps {
       if (((bitField0_ & 0x00000080) != 0)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 8, upsName_);
       }
-      if (((bitField0_ & 0x00000100) != 0)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 9, items_);
+      for (int i = 0; i < items_.size(); i++) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 9, items_.getRaw(i));
       }
       getUnknownFields().writeTo(output);
     }
@@ -4568,8 +4561,13 @@ public final class AmzUps {
       if (((bitField0_ & 0x00000080) != 0)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, upsName_);
       }
-      if (((bitField0_ & 0x00000100) != 0)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, items_);
+      {
+        int dataSize = 0;
+        for (int i = 0; i < items_.size(); i++) {
+          dataSize += computeStringSizeNoTag(items_.getRaw(i));
+        }
+        size += dataSize;
+        size += 1 * getItemsList().size();
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -4626,11 +4624,8 @@ public final class AmzUps {
         if (!getUpsName()
             .equals(other.getUpsName())) return false;
       }
-      if (hasItems() != other.hasItems()) return false;
-      if (hasItems()) {
-        if (!getItems()
-            .equals(other.getItems())) return false;
-      }
+      if (!getItemsList()
+          .equals(other.getItemsList())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -4676,9 +4671,9 @@ public final class AmzUps {
         hash = (37 * hash) + UPSNAME_FIELD_NUMBER;
         hash = (53 * hash) + getUpsName().hashCode();
       }
-      if (hasItems()) {
+      if (getItemsCount() > 0) {
         hash = (37 * hash) + ITEMS_FIELD_NUMBER;
-        hash = (53 * hash) + getItems().hashCode();
+        hash = (53 * hash) + getItemsList().hashCode();
       }
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
@@ -4821,7 +4816,8 @@ public final class AmzUps {
         destinationX_ = 0;
         destinationY_ = 0;
         upsName_ = "";
-        items_ = "";
+        items_ =
+            com.google.protobuf.LazyStringArrayList.emptyList();
         return this;
       }
 
@@ -4889,8 +4885,8 @@ public final class AmzUps {
           to_bitField0_ |= 0x00000080;
         }
         if (((from_bitField0_ & 0x00000100) != 0)) {
+          items_.makeImmutable();
           result.items_ = items_;
-          to_bitField0_ |= 0x00000100;
         }
         result.bitField0_ |= to_bitField0_;
       }
@@ -4933,9 +4929,14 @@ public final class AmzUps {
           bitField0_ |= 0x00000080;
           onChanged();
         }
-        if (other.hasItems()) {
-          items_ = other.items_;
-          bitField0_ |= 0x00000100;
+        if (!other.items_.isEmpty()) {
+          if (items_.isEmpty()) {
+            items_ = other.items_;
+            bitField0_ |= 0x00000100;
+          } else {
+            ensureItemsIsMutable();
+            items_.addAll(other.items_);
+          }
           onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
@@ -4964,9 +4965,6 @@ public final class AmzUps {
           return false;
         }
         if (!hasDestinationY()) {
-          return false;
-        }
-        if (!hasItems()) {
           return false;
         }
         return true;
@@ -5029,8 +5027,9 @@ public final class AmzUps {
                 break;
               } // case 66
               case 74: {
-                items_ = input.readBytes();
-                bitField0_ |= 0x00000100;
+                com.google.protobuf.ByteString bs = input.readBytes();
+                ensureItemsIsMutable();
+                items_.add(bs);
                 break;
               } // case 74
               default: {
@@ -5442,81 +5441,111 @@ public final class AmzUps {
         return this;
       }
 
-      private java.lang.Object items_ = "";
-      /**
-       * <code>required string items = 9;</code>
-       * @return Whether the items field is set.
-       */
-      public boolean hasItems() {
-        return ((bitField0_ & 0x00000100) != 0);
-      }
-      /**
-       * <code>required string items = 9;</code>
-       * @return The items.
-       */
-      public java.lang.String getItems() {
-        java.lang.Object ref = items_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            items_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
+      private com.google.protobuf.LazyStringArrayList items_ =
+          com.google.protobuf.LazyStringArrayList.emptyList();
+      private void ensureItemsIsMutable() {
+        if (!items_.isModifiable()) {
+          items_ = new com.google.protobuf.LazyStringArrayList(items_);
         }
+        bitField0_ |= 0x00000100;
       }
       /**
-       * <code>required string items = 9;</code>
-       * @return The bytes for items.
+       * <code>repeated string items = 9;</code>
+       * @return A list containing the items.
+       */
+      public com.google.protobuf.ProtocolStringList
+          getItemsList() {
+        items_.makeImmutable();
+        return items_;
+      }
+      /**
+       * <code>repeated string items = 9;</code>
+       * @return The count of items.
+       */
+      public int getItemsCount() {
+        return items_.size();
+      }
+      /**
+       * <code>repeated string items = 9;</code>
+       * @param index The index of the element to return.
+       * @return The items at the given index.
+       */
+      public java.lang.String getItems(int index) {
+        return items_.get(index);
+      }
+      /**
+       * <code>repeated string items = 9;</code>
+       * @param index The index of the value to return.
+       * @return The bytes of the items at the given index.
        */
       public com.google.protobuf.ByteString
-          getItemsBytes() {
-        java.lang.Object ref = items_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          items_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
+          getItemsBytes(int index) {
+        return items_.getByteString(index);
       }
       /**
-       * <code>required string items = 9;</code>
+       * <code>repeated string items = 9;</code>
+       * @param index The index to set the value at.
        * @param value The items to set.
        * @return This builder for chaining.
        */
       public Builder setItems(
-          java.lang.String value) {
+          int index, java.lang.String value) {
         if (value == null) { throw new NullPointerException(); }
-        items_ = value;
+        ensureItemsIsMutable();
+        items_.set(index, value);
         bitField0_ |= 0x00000100;
         onChanged();
         return this;
       }
       /**
-       * <code>required string items = 9;</code>
+       * <code>repeated string items = 9;</code>
+       * @param value The items to add.
        * @return This builder for chaining.
        */
-      public Builder clearItems() {
-        items_ = getDefaultInstance().getItems();
-        bitField0_ = (bitField0_ & ~0x00000100);
+      public Builder addItems(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        ensureItemsIsMutable();
+        items_.add(value);
+        bitField0_ |= 0x00000100;
         onChanged();
         return this;
       }
       /**
-       * <code>required string items = 9;</code>
-       * @param value The bytes for items to set.
+       * <code>repeated string items = 9;</code>
+       * @param values The items to add.
        * @return This builder for chaining.
        */
-      public Builder setItemsBytes(
+      public Builder addAllItems(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureItemsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, items_);
+        bitField0_ |= 0x00000100;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string items = 9;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearItems() {
+        items_ =
+          com.google.protobuf.LazyStringArrayList.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000100);;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string items = 9;</code>
+       * @param value The bytes of the items to add.
+       * @return This builder for chaining.
+       */
+      public Builder addItemsBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) { throw new NullPointerException(); }
-        items_ = value;
+        ensureItemsIsMutable();
+        items_.add(value);
         bitField0_ |= 0x00000100;
         onChanged();
         return this;
@@ -8308,7 +8337,7 @@ public final class AmzUps {
       "\002 \002(\003\022\023\n\013warehouseId\030\003 \002(\005\022\t\n\001x\030\004 \002(\005\022\t\n" +
       "\001y\030\005 \002(\005\022\024\n\014destinationX\030\006 \002(\005\022\024\n\014destin" +
       "ationY\030\007 \002(\005\022\017\n\007upsName\030\010 \001(\t\022\r\n\005items\030\t" +
-      " \002(\t\"@\n\rUALoadRequest\022\016\n\006seqNum\030\001 \002(\003\022\017\n" +
+      " \003(\t\"@\n\rUALoadRequest\022\016\n\006seqNum\030\001 \002(\003\022\017\n" +
       "\007truckId\030\002 \002(\005\022\016\n\006shipId\030\003 \002(\003\"2\n\020AUDeli" +
       "verRequest\022\016\n\006seqNum\030\001 \002(\003\022\016\n\006shipId\030\002 \002" +
       "(\003\"-\n\013UADelivered\022\016\n\006seqNum\030\001 \002(\003\022\016\n\006shi" +
