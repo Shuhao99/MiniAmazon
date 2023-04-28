@@ -4,7 +4,9 @@
   <div class="container">
     <h2>Your Orders</h2>
     {% for order_data in order_items %}
-      <h3>Order ID: {{ order_data.order.order_id }}</h3>
+      <hr>
+      <h4>Order ID: {{ order_data.order.order_id }}</h4>
+      <h4>Status: {{ order_data.order.status }}</h4> <!-- Add this line to display the order status -->
       <table class="table">
         <thead>
           <tr>
@@ -27,6 +29,7 @@
           {% endfor %}
         </tbody>
       </table>
+      <hr>
     {% endfor %}
   </div>
 {% endblock %}
