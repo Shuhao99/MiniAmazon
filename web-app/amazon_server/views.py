@@ -18,6 +18,7 @@ import socket
 from django.http import HttpResponseRedirect
 import time
 from django.urls import reverse
+from django.core.mail import send_mail
 
 
 def send_order_to_daemon(order_id):
@@ -214,6 +215,12 @@ def multi_purchase_view(request):
                 Ordered_Items.objects.create(item=item, count=count, order=order)
             success = send_order_to_daemon(order.order_id)
             if success:
+                subject = 'Order Confirmation'
+                message = f'Dear {request.user.username},\n\nYour order has been placed successfully. Your order ID is {order.order_id}.\n\nThank you for shopping with us!'
+                from_email = 'jeremyz0903@gmail.com'  # Use your email address here
+                recipient_list = [request.user.email]
+
+                send_mail(subject, message, from_email, recipient_list, fail_silently=False)
                 return redirect('home')
             else:
                 order.delete()
