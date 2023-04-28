@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import BecomeSellerForm, AddItemForm, MultiPurchaseForm, ConfirmOrderForm, CommentForm
+from .forms import BecomeSellerForm, AddItemForm, MultiPurchaseForm, ConfirmOrderForm, CommentForm, RegisterForm
 from .models import Ordered_Items, UserProfile, Item, ShoppingCartItem
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
@@ -89,18 +89,14 @@ def logout_view(request):
     return redirect("login")
 
 def register_view(request):
-    if request.method == "POST":
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            username = form.cleaned_data.get("username")
-            messages.success(request, f"Account created for {username}.")
-            user_profile = UserProfile(user=user, is_seller=False)
-            user_profile.save()
-            return redirect("login")
+    if request.method == 'POST':
+        user_form = RegisterForm(request.POST)
+        if user_form.is_valid():
+            user = user_form.save()
+            return redirect('login')
     else:
-        form = UserCreationForm()
-    return render(request, "amazon_server/register.html", {"form": form})
+        user_form = RegisterForm()
+    return render(request, 'amazon_server/register.html', context={'form': user_form})
 
 @login_required
 def become_seller(request):
@@ -239,7 +235,7 @@ def multi_purchase_view(request):
 
 @login_required
 def user_orders(request):
-    orders = Order.objects.filter(buyer=request.user).order_by("order_id")
+    orders = Order.objects.filter(buyer=request.user).order_by
     order_items = []
 
     for order in orders:
@@ -356,7 +352,7 @@ def shopping_cart_multi_purchase_view(request):
     return render(request, 'amazon_server/shopping_cart_multi_purchase.html', context)
 
 def delivered_items(request):
-    delivered_orders = Order.objects.filter(status='delivered').order_by("order_id")
+    delivered_orders = Order.objects.filter(status='delivered')
     ordered_items = Ordered_Items.objects.filter(order__in=delivered_orders)
 
     context = {'ordered_items': ordered_items}

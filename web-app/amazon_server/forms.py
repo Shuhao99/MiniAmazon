@@ -1,5 +1,8 @@
 from django import forms
 from .models import Item, Comment
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+
 class BecomeSellerForm(forms.Form):
     confirm = forms.BooleanField(
         required=True,
@@ -43,3 +46,10 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['content']
+
+class RegisterForm(UserCreationForm):
+    first_name = forms.CharField(max_length=40)
+    last_name = forms.CharField(max_length=40)
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = ["username", "first_name", "last_name", "email", "password1", "password2"]
