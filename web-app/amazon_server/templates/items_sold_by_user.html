@@ -1,0 +1,16 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <div class="container">
+    <h2>Items Sold by User</h2>
+    {% if items %}
+      <ul>
+      {% for item in items %}
+      <a href="{% url 'item_detail' item.id %}">{{ item.description }}</a>
+      {% endfor %}
+      </ul>
+    {% else %}
+      <p>You do not have any item listed.</p>
+    {% endif %}
+  </div>
+{% endblock %}

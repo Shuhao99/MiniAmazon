@@ -101,6 +101,7 @@ def register_view(request):
         user_form = RegisterForm(request.POST)
         if user_form.is_valid():
             user = user_form.save()
+            user_profile = UserProfile.objects.create(user=user)
             return redirect('login')
     else:
         user_form = RegisterForm()
@@ -127,10 +128,10 @@ def add_item(request):
         form = AddItemForm(request.POST)
         if form.is_valid():
             description = form.cleaned_data.get("description")
-            if Item.objects.filter(description=description).exists():
+            if Item.objects.filter(description=description, seller=request.user).exists():
                 messages.error(request, "This item has already been registered.")
             else:
-                Item.objects.create(description=description)
+                Item.objects.create(description=description, seller=request.user)
                 messages.success(request, "Item added successfully.")
                 return redirect("home")
     else:
@@ -476,3 +477,8 @@ def shopping_cart_update(request, item_id):
         cart_item.save()
 
     return redirect('shopping_cart')
+
+@login_required
+def items_sold_by_user(request, user_id):
+    items = Item.objects.filter(seller__id=user_id)
+    return render(request, 'items_sold_by_user.html', {'items': items})
