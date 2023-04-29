@@ -242,7 +242,7 @@ def multi_purchase_view(request):
 
 @login_required
 def user_orders(request):
-    orders = Order.objects.filter(buyer=request.user).order_by
+    orders = Order.objects.filter(buyer=request.user).order_by("order_id")
     order_items = []
 
     for order in orders:

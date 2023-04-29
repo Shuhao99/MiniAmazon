@@ -121,7 +121,7 @@ public class Database {
             );
 
             List<String> des_list = new ArrayList<>();
-            if(result.next()){
+            while(result.next()){
                 des_list.add(result.getString("description"));
             }
             statement.close();

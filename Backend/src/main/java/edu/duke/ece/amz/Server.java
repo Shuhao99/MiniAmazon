@@ -14,8 +14,8 @@ import static java.lang.System.exit;
 
 
 public class Server {
-    private static final String WORLD_HOST = "vcm-30632.vm.duke.edu";
-    private static final int WORLD_PORT = 23459;
+    private static final String WORLD_HOST = "vcm-32288.vm.duke.edu";
+    private static final int WORLD_PORT = 23456;
 
     private static final int LSN_UPS_ON = 7777;
 //    private static final int SEND_UPS_ON = 6666;

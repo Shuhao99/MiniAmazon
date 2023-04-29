@@ -35,7 +35,7 @@ public abstract class Sender {
         // Use timer to schedule the resend
         // Retry until acked
         Timer timer = new Timer();
-        long RESEND_TIMEOUT = 3000;
+        long RESEND_TIMEOUT = 4000;
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
