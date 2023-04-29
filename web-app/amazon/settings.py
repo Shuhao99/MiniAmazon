@@ -39,7 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'amazon_server',
+    'crispy_forms',
+    "crispy_bootstrap5",
 ]
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -81,7 +86,7 @@ DATABASES = {
         'NAME': 'amazon_db',
         'USER': 'cy141',
         'PASSWORD': 'passw@rd!',
-        'HOST': 'localhost',  # Use 'localhost' if your PostgreSQL server is on the same machine
+        'HOST': 'db',  # Use 'localhost' if your PostgreSQL server is on the same machine
         'PORT': '5432',  # Default PostgreSQL port is 5432
     }
 }
@@ -123,6 +128,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -137,3 +144,4 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'jeremyz0903@gmail.com'
 EMAIL_HOST_PASSWORD = 'rxqbwsrudwyycvqn'
+

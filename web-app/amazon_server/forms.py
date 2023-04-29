@@ -16,6 +16,11 @@ class AddItemForm(forms.Form):
         max_length=100,
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
+    header_img = forms.ImageField(
+        label="Header Image",
+        widget=forms.ClearableFileInput(attrs={'class': 'form-control-file'})
+    )
+
 
 class PurchaseForm(forms.Form):
     x_cord = forms.IntegerField(label='X Coordinate', min_value=0)

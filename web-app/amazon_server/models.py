@@ -27,6 +27,8 @@ class WareHouse(models.Model):
 class Item(models.Model):
     description = models.CharField(max_length=100)
     seller = models.ForeignKey(User, on_delete=models.CASCADE)
+    header_img = models.ImageField(null = True, blank=True, upload_to="images/")
+
     def __str__(self):
         return self.description
     class Meta:

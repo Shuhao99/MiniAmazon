@@ -1,5 +1,6 @@
 from django.apps import AppConfig
 from django.db.models.signals import post_migrate
+from PIL import Image
 # This function will check whether there are default users, and will create two if not.
 def default_users():
     from django.contrib.auth.models import User
@@ -25,14 +26,17 @@ def default_items():
     user = User.objects.get(username="chenjie")
     if Item.objects.all().count() == 0:
         # at the first time, we should insert some default data
+        apple_img = Image.open('images/apple.jpg')
+        cpt_img = Image.open('images/computer.jpg')
+        solution_i = Image.open('images/e_solution.png')
         Item.objects.create(
-            description="apple", seller = user      
+            description="apple", seller = user , header_img = apple_img    
         )
         Item.objects.create(
-            description="computer", seller = user       
+            description="computer", seller = user, header_img = cpt_img      
         )
         Item.objects.create(
-            description="exam solutions", seller = user       
+            description="exam solutions", seller = user ,  header_img = solution_i    
         )
 
 def default_warehouse():

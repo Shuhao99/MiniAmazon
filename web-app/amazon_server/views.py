@@ -125,13 +125,14 @@ def become_seller(request):
 def add_item(request):
     user_profile = UserProfile.objects.get(user=request.user)
     if request.method == "POST":
-        form = AddItemForm(request.POST)
+        form = AddItemForm(request.POST, request.FILES)
         if form.is_valid():
             description = form.cleaned_data.get("description")
             if Item.objects.filter(description=description, seller=request.user).exists():
                 messages.error(request, "This item has already been registered.")
             else:
-                Item.objects.create(description=description, seller=request.user)
+                header_img = form.cleaned_data['header_img']
+                Item.objects.create(description=description, seller=request.user, header_img=header_img)
                 messages.success(request, "Item added successfully.")
                 return redirect("home")
     else:
