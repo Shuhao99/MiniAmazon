@@ -442,7 +442,7 @@ def add_to_cart(request, item_id):
         quantity = request.GET['quantity']
 
         cart_item, created = ShoppingCartItem.objects.get_or_create(
-            user=request.user, item=item
+            user=request.user, item=item, quantity=quantity
         )
 
         if not created:
@@ -457,3 +457,22 @@ def add_to_cart(request, item_id):
     else:
         context = {'item': item}
         return render(request, 'amazon_server/add_to_cart.html', context)
+
+@login_required
+def remove_from_cart(request, item_id):
+    cart_item = ShoppingCartItem.objects.get(user=request.user, item_id=item_id)
+    cart_item.delete()
+    return redirect('shopping_cart')
+
+@login_required
+def shopping_cart_update(request, item_id):
+    cart_item = ShoppingCartItem.objects.get(user=request.user, item_id=item_id)
+
+    if 'delete' in request.POST:
+        cart_item.delete()
+    else:
+        new_quantity = int(request.POST[f'count_{item_id}'])
+        cart_item.quantity = new_quantity
+        cart_item.save()
+
+    return redirect('shopping_cart')
