@@ -19,6 +19,7 @@ from django.http import HttpResponseRedirect
 import time
 from django.urls import reverse
 from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404
 
 def send_confirmation(request, order):
     subject = 'Order Confirmation'
@@ -242,8 +243,53 @@ def multi_purchase_view(request):
     return render(request, 'amazon_server/multi_purchase.html', context)
 
 @login_required
+def single_purchase_view(request, item_id):
+    if request.method == 'POST':
+        form = ConfirmOrderForm(request.POST)
+        if form.is_valid():
+            x_cord = form.cleaned_data['x_cord']
+            y_cord = form.cleaned_data['y_cord']
+            ups_account_id = form.cleaned_data['ups_account_id']
+            warehouse = WareHouse.objects.all().order_by(
+                models.ExpressionWrapper(
+                    models.F('x_cord') - x_cord,
+                    output_field=models.IntegerField()
+                )**2 +
+                models.ExpressionWrapper(
+                    models.F('y_cord') - y_cord,
+                    output_field=models.IntegerField()
+                )**2
+            ).first()
+
+            buyer = request.user
+            order = Order.objects.create(warehouse=warehouse, buyer=buyer, status='Opened', dest_x=x_cord, dest_y=y_cord, ups_account_name=ups_account_id or None)
+
+            item = get_object_or_404(Item, id=item_id)
+            quantity = int(request.POST.get('quantity', 1))
+            Ordered_Items.objects.create(item=item, count=quantity, order=order)
+
+            success = send_order_to_daemon(order.order_id)
+            if success:
+                messages.success(request, 'Your order has been placed successfully.')
+                return redirect('home')
+            else:
+                order.delete()
+                messages.error(request, 'Failed to place your order.')
+                return redirect('place_order_failed')
+
+    else:
+        form = ConfirmOrderForm()
+
+    context = {
+        'form': form,
+        'item': get_object_or_404(Item, id=item_id),
+    }
+    return render(request, 'amazon_server/single_purchase.html', context)
+
+
+@login_required
 def user_orders(request):
-    orders = Order.objects.filter(buyer=request.user).order_by
+    orders = Order.objects.filter(buyer=request.user).order_by("order_id")
     order_items = []
 
     for order in orders:
@@ -380,3 +426,34 @@ def comment_form(request, ordered_item_id):
     else:
         form = CommentForm()
     return render(request, 'comment_form.html', {'form': form, 'ordered_item': ordered_item})
+
+
+@login_required
+def item_detail_view(request, item_id):
+    item = get_object_or_404(Item, id=item_id)
+    comments = Comment.objects.filter(item=item)
+    context = {'item': item, 'comments': comments}
+    return render(request, 'amazon_server/item_detail.html', context)
+
+@login_required
+def add_to_cart(request, item_id):
+    item = get_object_or_404(Item, pk=item_id)
+    if request.method == 'GET' and 'quantity' in request.GET:
+        quantity = request.GET['quantity']
+
+        cart_item, created = ShoppingCartItem.objects.get_or_create(
+            user=request.user, item=item
+        )
+
+        if not created:
+            cart_item.quantity += int(quantity)
+        else:
+            cart_item.quantity = int(quantity)
+
+        cart_item.save()
+
+        messages.success(request, 'Item added to cart successfully')
+        return redirect('browse')
+    else:
+        context = {'item': item}
+        return render(request, 'amazon_server/add_to_cart.html', context)

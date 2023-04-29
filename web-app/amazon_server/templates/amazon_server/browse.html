@@ -3,15 +3,10 @@
 {% block content %}
   <div class="container">
     <h2>Browse Items</h2>
-    <p>Purchase Now</p>
-    <form method="get" action="{% url 'multi_purchase' %}">
-      {% csrf_token %}
-      <ul>
+    <ul>
       {% for item in items %}
         <li>
-          <input type="checkbox" name="selected_items" value="{{ item.id }}">
           {{ item.description }}
-          Quantity: <input type="number" name="count_{{ item.id }}" value="1" min="1">
           <ul>
             {% for comment in comments %}
               {% if comment.item == item %}
@@ -19,31 +14,15 @@
               {% endif %}
             {% endfor %}
           </ul>
+          <form method="get" action="{% url 'single_purchase' item.id %}">
+            <button type="submit" class="btn btn-primary">Purchase</button>
+          </form>
+          <form method="get" action="{% url 'add_to_cart' item.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
+          </form>
         </li>
       {% endfor %}
-      </ul>
-      <button type="submit" class="btn btn-primary">Purchase Selected Items</button>
-    </form>
-    <p>Add to Shopping Cart</p>
-    <form method="get" action="{% url 'shopping_cart' %}">
-      {% csrf_token %}
-      <ul>
-      {% for item in items %}
-        <li>
-          <input type="checkbox" name="selected_items" value="{{ item.id }}">
-          {{ item.description }}
-          Quantity: <input type="number" name="count_{{ item.id }}" value="1" min="1">
-          <ul>
-            {% for comment in comments %}
-              {% if comment.item == item %}
-                <li>{{ comment.buyer.username }}: {{ comment.content }}</li>
-              {% endif %}
-            {% endfor %}
-          </ul>
-        </li>
-      {% endfor %}
-      </ul>
-      <button type="submit" class="btn btn-primary">Add</button>
-    </form>
+    </ul>
   </div>
 {% endblock %}

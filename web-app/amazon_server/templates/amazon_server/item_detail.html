@@ -1,0 +1,17 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <div class="container">
+    <h2>{{ item.description }}</h2>
+    <h3>Comments</h3>
+    <ul>
+      {% for comment in comments %}
+        <li>{{ comment.buyer.username }}: {{ comment.content }}</li>
+      {% endfor %}
+    </ul>
+    <form method="get" action="{% url 'single_purchase' item.id %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-primary">Purchase Item</button>
+    </form>
+  </div>
+{% endblock %}
