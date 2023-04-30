@@ -476,5 +476,6 @@ def shopping_cart_update(request, item_id):
 
 @login_required
 def items_sold_by_user(request, user_id):
+    comments = Comment.objects.all()
     items = Item.objects.filter(seller__id=user_id)
-    return render(request, 'items_sold_by_user.html', {'items': items})
+    return render(request, 'items_sold_by_user.html', {'items': items, 'comments': comments})
