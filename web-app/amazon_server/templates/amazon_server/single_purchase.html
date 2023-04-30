@@ -1,0 +1,14 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <div class="container">
+    <h2>Purchase {{ item.description }}</h2>
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <input type="hidden" name="item_id" value="{{ item.id }}">
+      Quantity: <input type="number" name="quantity" value="1" min="1">
+      <button type="submit" class="btn btn-primary">Purchase Item</button>
+    </form>
+  </div>
+{% endblock %}
