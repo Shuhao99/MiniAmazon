@@ -1,13 +1,17 @@
 # mini-amazon
 
 ## Layout
-- Browse items page
+- Browse items page (If the seller dont provide the image of this product, I will display no image available on the browse page)
+![image](https://user-images.githubusercontent.com/33047941/235331626-a65af769-bdc4-46f0-a678-8487930e3415.png)
 
 - Seller page
+![image](https://user-images.githubusercontent.com/33047941/235331648-5f9d03da-8808-4735-a934-3831a688ff85.png)
 
 - search page
+![image](https://user-images.githubusercontent.com/33047941/235331660-ae1d6e91-7812-4501-9b3e-240f50941f14.png)
 
 - Seller upload product page
+![image](https://user-images.githubusercontent.com/33047941/235331671-0fa238a2-35a8-43ea-a813-9f3991691222.png)
 
 
 ## Product Differentiation
