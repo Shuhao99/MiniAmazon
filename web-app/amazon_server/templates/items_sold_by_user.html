@@ -1,7 +1,52 @@
 {% extends "base_generic.html" %}
-
+{% load static %}
 {% block content %}
+
+<div class="album py-5 bg-body-tertiary">
   <div class="container">
+
+    <h2>Items Sold by User</h2>
+    {% if items %}
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+
+      
+
+      {% for item in items %}
+      <div class="col">
+        <div class="card shadow-sm">
+          {% if not item.header_img %}
+          <img src="/media/images/default.jpg " class="card-img-top" alt="Item image">
+          {% else %}
+          <img src=" {{ item.header_img.url }} " class="card-img-top" alt="Item image">
+          {% endif %}
+          
+          <div class="card-body">
+            <p class="card-text">
+              Item description: <br><a href="{% url 'item_detail' item.id %}">{{ item.description }}</a>
+              <br>
+              <p>Comments: </p>
+              <ul>
+                {% for comment in comments %}
+                  {% if comment.item == item %}
+                    <li>{{ comment.buyer.username }}: {{ comment.content }}</li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            </p>
+            
+          </div>
+        </div>
+      </div>
+          
+      {% endfor %}
+
+      {% else %}
+      <p>You do not have any item listed.</p>
+      {% endif %}
+
+</div>
+</div>
+  <!-- <div class="container">
     <h2>Items Sold by User</h2>
     {% if items %}
       <ul>
@@ -12,5 +57,5 @@
     {% else %}
       <p>You do not have any item listed.</p>
     {% endif %}
-  </div>
+  </div> -->
 {% endblock %}

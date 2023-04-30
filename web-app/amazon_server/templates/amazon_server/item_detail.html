@@ -2,8 +2,18 @@
 
 {% block content %}
   <div class="container">
+    
+    
+    {% if not item.header_img %}
+    <img src="/media/images/default.jpg " class="img-fluid" alt="Item image">
+    {% else %}
+    <img src=" {{ item.header_img.url }} " class="img-fluid" alt="Item image">
+    {% endif %}
+    <hr>
     <h2>{{ item.description }}</h2>
-    <h3>Comments</h3>
+    <br>
+    <br>
+    <p>Comments</p>
     <ul>
       {% for comment in comments %}
         <li>{{ comment.buyer.username }}: {{ comment.content }}</li>
@@ -15,3 +25,4 @@
     </form>
   </div>
 {% endblock %}
+

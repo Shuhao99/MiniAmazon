@@ -26,17 +26,14 @@ def default_items():
     user = User.objects.get(username="chenjie")
     if Item.objects.all().count() == 0:
         # at the first time, we should insert some default data
-        apple_img = Image.open('images/apple.jpg')
-        cpt_img = Image.open('images/computer.jpg')
-        solution_i = Image.open('images/e_solution.png')
         Item.objects.create(
-            description="apple", seller = user , header_img = apple_img    
+            description="apple", seller = user 
         )
         Item.objects.create(
-            description="computer", seller = user, header_img = cpt_img      
+            description="computer", seller = user     
         )
         Item.objects.create(
-            description="exam solutions", seller = user ,  header_img = solution_i    
+            description="exam solutions", seller = user   
         )
 
 def default_warehouse():

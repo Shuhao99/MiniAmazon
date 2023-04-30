@@ -442,18 +442,13 @@ def add_to_cart(request, item_id):
     item = get_object_or_404(Item, pk=item_id)
     if request.method == 'GET' and 'quantity' in request.GET:
         quantity = request.GET['quantity']
-
-        cart_item, created = ShoppingCartItem.objects.get_or_create(
-            user=request.user, item=item, quantity=quantity
-        )
-
-        if not created:
-            cart_item.quantity += int(quantity)
-        else:
-            cart_item.quantity = int(quantity)
-
-        cart_item.save()
-
+        try:
+            shopping_cart_item = ShoppingCartItem.objects.get(user=request.user, item=item)
+            shopping_cart_item.quantity += int(quantity)
+            shopping_cart_item.save()
+        except ShoppingCartItem.DoesNotExist:
+            shopping_cart_item = ShoppingCartItem.objects.create(user=request.user, item=item, quantity=quantity)
+            shopping_cart_item.save()
         messages.success(request, 'Item added to cart successfully')
         return redirect('browse')
     else:
