@@ -1,4 +1,5 @@
 {% extends "base_generic.html" %}
+{% load static %}
 
 {% block content %}
   <div class="container">
@@ -7,38 +8,55 @@
       <input type="text" name="q" value="{{ query }}">
       <button type="submit">Search</button>
     </form>
-    <form method="get" action="{% url 'multi_purchase' %}">
-      {% csrf_token %}
-      <ul>
+    <br>
+    <br>
+    <br>
+    
+    {% if items %}
+     
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
       {% for item in items %}
-        <li>
-          <input type="checkbox" name="selected_items" value="{{ item.id }}">
-          {{ item.description }}
-          Quantity: <input type="number" name="count_{{ item.id }}" value="1" min="1">
-          {% if item.comments.all %}
-            <ul>
-              {% for comment in item.comments.all %}
-                <li>{{ comment.user.username }}: {{ comment.content }}</li>
-              {% endfor %}
-            </ul>
+      <div class="col">
+        <div class="card shadow-sm">
+          {% if not item.header_img %}
+          <img src="/media/images/default.jpg " class="card-img-top" alt="Item image">
+          {% else %}
+          <img src=" {{ item.header_img.url }} " class="card-img-top" alt="Item image">
           {% endif %}
-        </li>
-      {% endfor %}
-      </ul>
-      <button type="submit" class="btn btn-primary">Purchase Selected Items</button>
-    </form>
-    <form method="get" action="{% url 'shopping_cart' %}">
-      {% csrf_token %}
-      <ul>
-      {% for item in items %}
-        <li>
-          <input type="checkbox" name="selected_items" value="{{ item.id }}">
-          {{ item.description }}
-          Quantity: <input type="number" name="count_{{ item.id }}" value="1" min="1">
-        </li>
-      {% endfor %}
-      </ul>
-      <button type="submit" class="btn btn-primary">Add to Shopping Cart</button>
-    </form>
+          
+          <div class="card-body">
+            <p class="card-text">
+              Item description:  <br><a href="{% url 'item_detail' item.id %}"> {{ item.description }}</a>
+              <br>
+              <p>Comments: </p>
+              <ul>
+                {% for comment in comments %}
+                  {% if comment.item == item %}
+                    <li>{{ comment.buyer.username }}: {{ comment.content }}</li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            </p>
+            <div class="d-flex justify-content-between align-items-center">
+              
+                <form method="get" action="{% url 'single_purchase' item.id %}">
+                  <button type="submit" class="btn btn-sm btn btn-warning">Purchase</button>
+                </form>
+                <form method="get" action="{% url 'add_to_cart' item.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-primary">Add to Cart</button>
+                </form>
+              
+              
+            </div>
+          </div>
+        </div>
+      </div>
+          
+    {% endfor %}
+
+    {% else %}
+      <p>No items found matching your search query.</p>
+    {% endif %}
   </div>
 {% endblock %}

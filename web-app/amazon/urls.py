@@ -14,8 +14,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
 from django.urls import path, include
-from amazon_server.views import login_view, logout_view, register_view, become_seller, add_item, home, browse_view, search_view, purchase_view, multi_purchase_view, user_orders, shopping_cart_view, shopping_cart_multi_purchase_view, place_order_failed_view, delivered_items, comment_form
+from amazon_server.views import login_view, logout_view, register_view, become_seller, add_item, home, browse_view, search_view, purchase_view, multi_purchase_view, user_orders, shopping_cart_view, shopping_cart_multi_purchase_view, place_order_failed_view, delivered_items, comment_form, item_detail_view, single_purchase_view, add_to_cart, remove_from_cart, shopping_cart_update, items_sold_by_user
 urlpatterns = [
     path("", home, name="home"),
     path('admin/', admin.site.urls),
@@ -36,5 +38,11 @@ urlpatterns = [
     path('delivered_items/', delivered_items, name='delivered_items'),
     path('delivered_items/<int:ordered_item_id>/comment', comment_form, name='comment_form'),
     path('', include('django.contrib.auth.urls')),
-]
+    path('item/<int:item_id>/', item_detail_view, name='item_detail'),
+    path('item/<int:item_id>/purchase/', single_purchase_view, name='single_purchase'),
+    path('add_to_cart/<int:item_id>/', add_to_cart, name='add_to_cart'),
+    path('remove_from_cart/<int:item_id>/', remove_from_cart, name='remove_from_cart'),
+    path('shopping_cart_update/<int:item_id>/', shopping_cart_update, name='shopping_cart_update'),
+    path('items_sold_by_user/<int:user_id>/', items_sold_by_user, name='items_sold_by_user'),
+] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
 

@@ -22,8 +22,13 @@ class WareHouse(models.Model):
     class Meta:
         db_table = 'warehouse'
 
+
+
 class Item(models.Model):
     description = models.CharField(max_length=100)
+    seller = models.ForeignKey(User, on_delete=models.CASCADE)
+    header_img = models.ImageField(null = "/media/images/default.png", blank="/media/images/default.png", upload_to="images/")
+
     def __str__(self):
         return self.description
     class Meta:
@@ -63,7 +68,7 @@ class ShoppingCartItem(models.Model):
     quantity = models.PositiveIntegerField()
 
     class Meta:
-        unique_together = ('user', 'item')
+        # unique_together = ('user', 'item')
         db_table = 'shoppingcartitem'
 
 class Comment(models.Model):

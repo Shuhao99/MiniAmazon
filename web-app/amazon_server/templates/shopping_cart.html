@@ -4,7 +4,7 @@
   <div class="container">
     <h2>Shopping Cart</h2>
     {% if shopping_cart_items %}
-      <form method="get" action="{% url 'shopping_cart_multi_purchase' %}">
+      <form method="post" action="{% url 'shopping_cart_multi_purchase' %}">
         {% csrf_token %}
         <ul>
         {% for cart_item in shopping_cart_items %}
@@ -12,6 +12,7 @@
             <input type="checkbox" name="selected_items" value="{{ cart_item.item.id }}">
             {{ cart_item.item.description }}
             Quantity: <input type="number" name="count_{{ cart_item.item.id }}" value="{{ cart_item.quantity }}" min="1">
+            <a href="{% url 'remove_from_cart' cart_item.item.id %}" class="btn btn-danger" style="display:inline;">Delete</a>
           </li>
         {% endfor %}
         </ul>

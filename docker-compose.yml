@@ -10,6 +10,7 @@ services:
       restart: always
       volumes:
             - data-volume:/var/lib/postgresql/data
+            
   web-init:
       build: ./web-app
       command: /code/initserver.sh
